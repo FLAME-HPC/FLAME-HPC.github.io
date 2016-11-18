@@ -1,0 +1,1266 @@
+---
+layout: default
+title: User Manual
+---
+
+<BR/>
+<A NAME="SECTION00010000000000000000"></A>
+<H1>
+Introduction
+</H1>
+
+<P>
+The FLAME framework is an enabling tool to create agent-based models that can
+be run on high performance computers (HPCs). Models are created based upon a
+model of computation called extended finite state machines. By defining
+agent-based models in this way the FLAME framework can
+automatically generate simulation programs that can run models efficiently on
+HPCs.
+The user manual is split into 3 parts. Section <A HREF="#sec:model_description">2</A>
+describes the way to specify the model design while Section
+<A HREF="#sec:model_implementation">3</A> describes how to implement the model
+functionality. Section <A HREF="#sec:model_execution">4</A> finishes with how to run a
+model.
+
+<BR/>
+<A NAME="SECTION00020000000000000000"></A>
+<A NAME="sec:model_description"></A>
+<H1>Model Description</H1>
+
+<P>
+Models descriptions are formatted in XML (Extensible Markup Language) tag
+structures to allow easy human and computer readability, and allow easier collaborations between
+developers writing applications that interact with model definitions.
+
+<P>
+The model XML document has a structure that is defined by a schema.
+The schema of the XML document is currently located
+at:
+
+<BR/>
+<PRE>
+  http://flame.ac.uk/schema/xmml_v2.xsd
+</PRE>
+
+<P>
+This provides a way to validate the model document to make sure all the tags are
+being used correctly. This can be achived by using xml command line tools like
+XMLStarlet and xmllint or by using editors that
+can have xml validation builtin like Eclipse. The start and end
+of a model file should be formatted as follows:
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;xmodel version=&quot;2&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+     xsi:noNamespaceSchemaLocation='http://flame.ac.uk/schema/xmml_v2.xsd'&gt;
+    &lt;name&gt;Model_name&lt;/name&gt;
+    &lt;version&gt;the version&lt;/version&gt;
+    &lt;description&gt;a description&lt;/description&gt;
+    &lt;!-- more... --&gt;
+&lt;/xmodel&gt;</code>
+  </pre>
+</div>
+
+
+<P>
+Where name is the name of the model, version is the version, and description
+allows the description of the model. Models can also contain:
+
+<BR/>
+
+<UL>
+<LI><B>other models</B> (enabled or disabled)
+</LI>
+<LI><B>environment</B>
+
+<UL>
+<LI>constant variables
+</LI>
+<LI>location of function files
+</LI>
+<LI>time units
+</LI>
+<LI>data types
+</LI>
+</UL>
+</LI>
+<LI><B>agent types</B>
+
+<UL>
+<LI>name
+</LI>
+<LI>description
+</LI>
+<LI>memory
+</LI>
+<LI>functions
+</LI>
+</UL>
+</LI>
+<LI><B>message types</B>
+
+<UL>
+<LI>name
+</LI>
+<LI>description
+</LI>
+<LI>variables
+</LI>
+</UL>
+</LI>
+</UL>
+
+<BR/>
+<A NAME="SECTION00021000000000000000"></A>
+<H2>
+Model in Multiple Files
+</H2>
+
+<P>
+It is possible to define a model in multiple files. FLAME reads a model from
+multiple files as if the model was defined in one file. This capability allows
+different parts of a model to be enabled or disabled easily. For example if a
+model includes different versions of a sub-model that can be exchanged, or a
+subsystem of a model can be disabled to see how it affects the model.
+Alternatively this capability could be used as a hierarchy, for example a `body'
+model could include a model of the `cardiovascular system' that includes a
+model of the `heart'. The following tags show the inclusion of two models, one
+enabled and one disabled:
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;models&gt;
+    &lt;model&gt;&lt;file&gt;sub_model_1.xml&lt;/file&gt;&lt;enabled&gt;true&lt;/enabled&gt;&lt;/model&gt;
+    &lt;model&gt;&lt;file&gt;sub_model_2.xml&lt;/file&gt;&lt;enabled&gt;false&lt;/enabled&gt;&lt;/model&gt;
+  &lt;/models&gt;</code>
+  </pre>
+</div>
+
+
+<P>
+The location of any sub model should be relative to the original model xmml
+file.
+
+<BR/>
+<A NAME="SECTION00022000000000000000"></A>
+<H2>
+Environment
+</H2>
+
+<P>
+The environment of a model holds information that maybe required by a model but
+is not part of an agent or a message. This includes:
+
+<BR/>
+
+<UL>
+<LI>constant variables - for setting up different simulations easily
+</LI>
+<LI>location of function files - the path to the implementations of agent
+functions
+</LI>
+<LI>time units - for easily activating agent functions dependent on time
+periods
+</LI>
+<LI>data types - user defined data types used by agent memory or
+message variables
+</LI>
+</UL>
+
+<P>
+This notion of environment does not correspond to an environment that would be
+a part of a model where agents would interact with the environment. Anything
+that can change in a model must be represented by an agent, therefore if a
+model includes a changeable environment that agents can interact with, this in
+itself must be represented by an agent.
+
+<BR/>
+<A NAME="SECTION00022100000000000000"></A>
+<H3>
+Constant Variables
+</H3>
+
+<P>
+These are constant variables that can be set at the start of simulation runs
+initial starting values and cannot be altered thereafter. They can be defined as
+follows:
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;constants&gt;
+    &lt;variable&gt;
+     &lt;type&gt;int&lt;/type&gt;
+     &lt;name&gt;my_constant&lt;/name&gt;
+     &lt;description&gt;value read in initial simulation settings&lt;/description&gt;
+    &lt;/variable&gt;
+  &lt;/constants&gt;</code>
+  </pre>
+</div>
+
+
+<P>
+Varible names cannot have spaces, instead please use lower case letters,
+numbers, underscores and hyphens. This also applies to agent memory names, message names, data type
+names and function names.
+
+<BR/>
+<A NAME="SECTION00022200000000000000"></A>
+<H3>
+Function Files
+</H3>
+
+<P>
+Function files hold the source code for the implementation of the
+agent functions. The location is relative to the location of the model
+xmml file. They are included in the compilation script (Makefile) of the
+produced model:
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;functionFiles&gt;
+  &lt;file&gt;function_source_code_1.c&lt;/file&gt;
+  &lt;file&gt;function_source_code_2.c&lt;/file&gt;
+  &lt;/functionFiles&gt;</code>
+  </pre>
+</div>
+
+
+<BR/>
+<A NAME="SECTION00022300000000000000"></A>
+<A NAME="timeunit"></A>
+<H3>
+Time Units
+</H3>
+
+<P>
+Time units are used to define time periods that agent functions act within. For
+example a model that uses a calendar based time system could take a day to be
+the smallest time step, i.e. one iteration. Other time units can then use this
+definition to define other time units, for example weeks, months, and years.
+
+<P>
+A time unit contains:
+
+<BR/>
+
+<UL>
+<LI>name - name of the time unit.
+</LI>
+<LI>unit - can contain `iteration' or other defined time units.
+</LI>
+<LI>period - the length of the time unit using the above units.
+</LI>
+</UL>
+
+<P>
+An example of a calendar based time unit set up can be defined as:
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;timeUnits&gt;
+  
+    &lt;timeUnit&gt;
+      &lt;name&gt;daily&lt;/name&gt;
+      &lt;unit&gt;iteration&lt;/unit&gt;
+      &lt;period&gt;1&lt;/period&gt;
+    &lt;/timeUnit&gt;
+    
+    &lt;timeUnit&gt;
+      &lt;name&gt;weekly&lt;/name&gt;
+      &lt;unit&gt;daily&lt;/unit&gt;
+      &lt;period&gt;5&lt;/period&gt;
+    &lt;/timeUnit&gt;
+    
+    &lt;timeUnit&gt;
+      &lt;name&gt;monthly&lt;/name&gt;
+      &lt;unit&gt;weekly&lt;/unit&gt;
+      &lt;period&gt;4&lt;/period&gt;
+    &lt;/timeUnit&gt;
+    
+    &lt;timeUnit&gt;
+      &lt;name&gt;quarterly&lt;/name&gt;
+      &lt;unit&gt;monthly&lt;/unit&gt;
+      &lt;period&gt;3&lt;/period&gt;
+    &lt;/timeUnit&gt;
+    
+    &lt;timeUnit&gt;
+      &lt;name&gt;yearly&lt;/name&gt;
+      &lt;unit&gt;monthly&lt;/unit&gt;
+      &lt;period&gt;12&lt;/period&gt;
+    &lt;/timeUnit&gt;
+    
+  &lt;/timeUnits&gt;</code>
+  </pre>
+</div>
+
+
+<P>
+
+<BR/>
+<A NAME="SECTION00022400000000000000"></A>
+<H3>
+Data Types
+</H3>
+
+<P>
+Data types are user defined data types that can be used in a model. They are a
+structure for holding variables. Single variables can be:
+
+<BR/>
+
+<UL>
+<LI>C fundamental data types - int, float, double, char.
+</LI>
+<LI>static array - of size ten: variable_name[10].
+</LI>
+<LI>dynamic array - available by placing `_array' after
+  the data type name: variable_name_array (please do not use if possible as
+  useage affects load balancing on high performance computers).
+</LI>
+</UL>
+
+<P>
+For example:
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;variables&gt;
+    &lt;variable&gt;
+      &lt;type&gt;int&lt;/type&gt;
+      &lt;name&gt;int_single&lt;/name&gt;
+      &lt;description&gt;A single integer&lt;/description&gt;
+    &lt;/variable&gt;
+    &lt;variable&gt;
+      &lt;type&gt;int&lt;/type&gt;
+      &lt;name&gt;int_list[2]&lt;/name&gt;
+      &lt;description&gt;A list of 2 integers&lt;/description&gt;
+    &lt;/variable&gt;
+    &lt;variable&gt;
+      &lt;type&gt;int_array&lt;/type&gt;
+      &lt;name&gt;int_dynamic_list&lt;/name&gt;
+      &lt;description&gt;A list of integers that can change size&lt;/description&gt;
+    &lt;/variable&gt;
+  &lt;/variables&gt;</code>
+  </pre>
+</div>
+
+
+<P>
+Data types can hold the above types of variables and also other defined data
+types. In the example below the data type <I>line</I> contains a variable
+of data type <I>position</I> which is defined above it:
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;dataTypes&gt;
+
+ &lt;dataType&gt;
+  &lt;name&gt;position&lt;/name&gt;
+  &lt;description&gt;position in 3D using doubles&lt;/description&gt;
+  &lt;variables&gt;
+   &lt;variable&gt;&lt;type&gt;double&lt;/type&gt;&lt;name&gt;x&lt;/name&gt;
+    &lt;description&gt;position on x-axis&lt;/description&gt;
+   &lt;/variable&gt;
+   &lt;variable&gt;&lt;type&gt;double&lt;/type&gt;&lt;name&gt;y&lt;/name&gt;
+    &lt;description&gt;position on y-axis&lt;/description&gt;
+   &lt;/variable&gt;
+   &lt;variable&gt;&lt;type&gt;double&lt;/type&gt;&lt;name&gt;z&lt;/name&gt;
+    &lt;description&gt;position on z-axis&lt;/description&gt;
+   &lt;/variable&gt;
+  &lt;/variables&gt;
+ &lt;/dataType&gt;
+
+ &lt;dataType&gt;
+  &lt;name&gt;line&lt;/name&gt;
+  &lt;description&gt;a line defined by two points&lt;/description&gt;
+  &lt;variables&gt;
+   &lt;variable&gt;&lt;type&gt;position&lt;/type&gt;&lt;name&gt;start&lt;/name&gt;
+    &lt;description&gt;start position of the line&lt;/description&gt;
+   &lt;/variable&gt;
+   &lt;variable&gt;&lt;type&gt;position&lt;/type&gt;&lt;name&gt;end&lt;/name&gt;
+    &lt;description&gt;end position of the line&lt;/description&gt;
+   &lt;/variable&gt;
+  &lt;/variables&gt;
+ &lt;/dataType&gt;
+
+  &lt;/dataTypes&gt;</code>
+  </pre>
+</div>
+
+
+<BR/>
+<A NAME="SECTION00023000000000000000"></A>
+<H2>
+Agents
+</H2>
+
+<P>
+An agent type contains a name, a description, memory, and functions:
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;agents&gt;
+
+  &lt;xagent&gt;
+    &lt;name&gt;Agent_Name&lt;/name&gt;
+    &lt;description&gt;&lt;/description&gt;
+    &lt;memory&gt;
+     ...
+    &lt;/memory&gt;
+    &lt;functions&gt;
+      ...
+    &lt;/functions&gt;
+  &lt;/xagent&gt;
+  
+  &lt;/agents&gt;</code>
+  </pre>
+</div>
+
+
+<BR/>
+<A NAME="SECTION00023100000000000000"></A>
+<H3>
+Agent Memory
+</H3>
+
+<P>
+Agent memory defines variables, where variables are defined by their type, C
+data types or user defined data types from the environment, a name, and a
+description:
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;memory&gt;
+    &lt;variable&gt;
+      &lt;type&gt;int&lt;/type&gt;
+      &lt;name&gt;id&lt;/name&gt;
+      &lt;description&gt;identity number&lt;/description&gt;
+    &lt;/variable&gt;
+    &lt;variable&gt;
+      &lt;type&gt;double&lt;/type&gt;
+      &lt;name&gt;x&lt;/name&gt;
+      &lt;description&gt;position in x-axis&lt;/description&gt;
+    &lt;/variable&gt;
+  &lt;/memory&gt;</code>
+  </pre>
+</div>
+
+
+<P>
+Note: Agent memory variable cannot be called 'name' as this is used to define the agent type in simulation input files.
+
+<BR/>
+<A NAME="SECTION00023200000000000000"></A>
+<H3>
+Agent Functions
+</H3>
+
+<P>
+An agent function contains:
+
+<BR/>
+
+<UL>
+<LI>name - the function name which must correspond to an implemented function
+name and must be unique across the model
+</LI>
+<LI>description
+</LI>
+<LI>current state - the current state the agent has to be in.
+</LI>
+<LI>next state - the next state the agent will transition to.
+</LI>
+<LI>condition - a possible condition of the function transition.
+</LI>
+<LI>inputs - the possible input messages.
+</LI>
+<LI>outputs - the possible output messages.
+</LI>
+</UL>
+
+<P>
+And as tags:
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;function&gt;
+    &lt;name&gt;function_name&lt;/name&gt;
+    &lt;description&gt;function description&lt;/description&gt;
+    &lt;currentState&gt;current_state&lt;/currentState&gt;
+    &lt;nextState&gt;next_state&lt;/nextState&gt;
+    &lt;condition&gt;
+    ...
+    &lt;/condition&gt;
+    &lt;inputs&gt;
+    ...
+    &lt;/inputs&gt;
+    &lt;outputs&gt;
+    ...
+    &lt;/outputs&gt;
+  &lt;/function&gt;</code>
+  </pre>
+</div>
+
+
+<P>
+The current state and next state tags hold the names of states. This is the
+only place where states are defined. State names must coordinate with other
+functions states to produce a transitional graph from a single start state to
+end many possible end states.
+
+<P>
+<A NAME="functioncond"></A>
+<P>
+A function can have a condition on its transition. This condition can include
+conditions on the agent memory and also on any time units defined in the
+environment. At any state with outgoing transitions with conditions it must be
+possible for a transition to happen, i.e. it must be possible for every agent
+to transition from the start state to an end state. Each possible transition
+must be mutually exclusive, i.e. the order that the function conditions are
+tested is not defined. A function named `idle' is available to be used for
+functions that do not require an implementation.
+
+<P>
+Conditions (that are not just time unit based) take the form:
+
+<BR/>
+
+<UL>
+<LI>lhs - left hand side of comparison
+</LI>
+<LI>op - the comparison operator
+</LI>
+<LI>rhs - the right hand side of the comparison
+</LI>
+</UL>
+
+<P>
+Or in tags:
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;lhs&gt;&lt;/lhs&gt;&lt;op&gt;&lt;/op&gt;&lt;rhs&gt;&lt;/rhs&gt;</code>
+  </pre>
+</div>
+
+
+<P>
+Sides to compare (lhs or rhs) can be either a value, denoted by value tags, 
+a formula, currently also in value tags, or another comparison rule.
+Values and formula can include agent variables which are preceded by `a'.
+
+<P>
+The comparison operator can be one of the following comparison functions:
+
+<BR/>
+
+<UL>
+<LI>EQ - equal to
+</LI>
+<LI>NEQ - not equal to
+</LI>
+<LI>LEQ - less than or equal to
+</LI>
+<LI>GEQ - greater than or equal to
+</LI>
+<LI>LT - less then
+</LI>
+<LI>GT - greater than
+</LI>
+<LI>IN - an integer (in lhs) is a member of an array of integers (in rhs)
+</LI>
+</UL>
+
+<P>
+or can be one of the following logic operators as well:
+
+<BR/>
+
+<UL>
+<LI>AND
+</LI>
+<LI>OR
+</LI>
+</UL>
+
+<P>
+The operator `NOT' can be used by placing `not' tags around a comparison rule.
+For example the following tagged rule describes the condition being true when
+the `z' variable of the agent is greater than zero and less than ten:
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;condition&gt;
+    &lt;lhs&gt;
+      &lt;lhs&gt;&lt;value&gt;a.z&lt;/value&gt;&lt;/lhs&gt;
+      &lt;op&gt;GT&lt;/op&gt;
+      &lt;rhs&gt;&lt;value&gt;0.0&lt;/value&gt;&lt;/rhs&gt;
+    &lt;/lhs&gt;
+    &lt;op&gt;AND&lt;/op&gt;
+    &lt;rhs&gt;
+      &lt;not&gt;
+        &lt;lhs&gt;&lt;value&gt;a.z&lt;/value&gt;&lt;/lhs&gt;
+        &lt;op&gt;LT&lt;/op&gt;
+        &lt;rhs&gt;&lt;value&gt;10.0&lt;/value&gt;&lt;/rhs&gt;
+      &lt;/not&gt;
+    &lt;/rhs&gt;
+  &lt;/condition&gt;</code>
+  </pre>
+</div>
+
+
+<P>
+A condition can also depend on any time units described in the environment. For
+example the following condition is true when the agent variable
+`day_of_month_to_act' is equal to the number of iterations since of the
+start, the phase, of the `monthly' period, i.e. twenty iterations as defined in
+the time unit:
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;condition&gt;
+    &lt;time&gt;
+      &lt;period&gt;monthly&lt;/period&gt;
+      &lt;phase&gt;a.day_of_month_to_act&lt;/phase&gt;
+    &lt;/time&gt;
+  &lt;/condition&gt;</code>
+  </pre>
+</div>
+
+
+<P>
+Time conditions can also be encased within a `not' tag in indicate the reverse
+condition. 
+<BR>
+<P>
+Functions can have input and output message types. For example the following
+example the function takes message types `a' and `b' as inputs and outputs
+message type `c':
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;inputs&gt;
+    &lt;input&gt;&lt;messageName&gt;a&lt;/messageName&gt;&lt;/input&gt;
+    &lt;input&gt;&lt;messageName&gt;b&lt;/messageName&gt;&lt;/input&gt;
+  &lt;/inputs&gt;
+  &lt;outputs&gt;
+    &lt;output&gt;&lt;messageName&gt;c&lt;/messageName&gt;&lt;/output&gt;
+  &lt;/outputs&gt;</code>
+  </pre>
+</div>
+
+
+<P>
+Message filters can be applied to message inputs and allow the messages to be
+filtered. Filters are defined similar to function conditions but include
+message variables which are prefixed by an `m'. The following filter only
+allows messages where the agent variable `id' is equal to the message variable
+`worker_id':
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;input&gt;
+    &lt;messageName&gt;firing&lt;/messageName&gt;
+    &lt;filter&gt;
+      &lt;lhs&gt;&lt;value&gt;a.id&lt;/value&gt;&lt;/lhs&gt;
+      &lt;op&gt;EQ&lt;/op&gt;
+      &lt;rhs&gt;&lt;value&gt;m.worker_id&lt;/value&gt;&lt;/rhs&gt;
+    &lt;/filter&gt;
+    &lt;sort&gt;
+      &lt;key&gt;wage&lt;/key&gt;
+      &lt;order&gt;descend&lt;/order&gt;
+    &lt;/sort&gt;
+  &lt;/input&gt;</code>
+  </pre>
+</div>
+
+
+<P>
+The previous example also includes the use of a sort tag. The sort tag uses a
+key, a message variable, to sort the list in `ascend'ing or `descend'ing order
+via the order tag.
+
+<P>
+Other input filters available are called `box2d' and `box3d'. These filters 
+only allow messages that are within a Cartesian box around the current agent. The variables
+`x' and `y' must be used in agent and message memory for `2d' and additionally `z'
+for using `3d'. The value given to this filter is the distance from the agent to the
+side of the box. For example a value of `1' gives a box of size `2'. The value can
+be a number or an agent memory variable using the `a.' notation. The limits of the 
+box are inclusive which means messages with position on the edge of the box pass the
+filter.
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;input&gt;
+    &lt;messageName&gt;2d_location&lt;/messageName&gt;
+    &lt;filter&gt;
+      &lt;box2d&gt;1.0&lt;/box2d&gt;
+    &lt;/filter&gt;
+  &lt;/input&gt;
+  &lt;input&gt;
+    &lt;messageName&gt;3d_location&lt;/messageName&gt;
+    &lt;filter&gt;
+      &lt;box3d&gt;a.apothem&lt;/box3d&gt;
+    &lt;/filter&gt;
+  &lt;/input&gt;</code>
+  </pre>
+</div>
+
+
+<P>
+Using filters in the model description enables FLAME to make message
+communication more efficient by pre-sorting messages and using other techniques.
+
+Messages can also be randomised using the random tag:
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;input&gt;
+    &lt;messageName&gt;firing&lt;/messageName&gt;
+    &lt;random&gt;true&lt;/random&gt;
+  &lt;/input&gt;</code>
+  </pre>
+</div>
+
+
+
+<BR/>
+<A NAME="SECTION00024000000000000000"></A>
+<H2>
+Messages
+</H2>
+
+<P>
+Messages defined in a model must have a type which is defined by a name and the
+variables that are included in the message. Variables cannot include dynamic arrays. 
+The following example is a message called `signal' that holds a position in 3D.
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;messages&gt;
+  
+  &lt;message&gt;
+    &lt;name&gt;signal&lt;/name&gt;
+    &lt;description&gt;Holds the position of the sending agent&lt;/description&gt;
+    &lt;variables&gt;
+      &lt;variable&gt;
+        &lt;type&gt;double&lt;/type&gt;
+        &lt;name&gt;x&lt;/name&gt;
+        &lt;description&gt;The x-axis position&lt;/description&gt;
+      &lt;/variable&gt;
+      &lt;variable&gt;
+        &lt;type&gt;double&lt;/type&gt;
+        &lt;name&gt;y&lt;/name&gt;
+        &lt;description&gt;The y-axis position&lt;/description&gt;
+      &lt;/variable&gt;
+      &lt;variable&gt;
+        &lt;type&gt;double&lt;/type&gt;
+        &lt;name&gt;z&lt;/name&gt;
+        &lt;description&gt;The z-axis position&lt;/description&gt;
+      &lt;/variable&gt;
+    &lt;/variables&gt;
+  &lt;/message&gt;
+  
+  &lt;/messages&gt;</code>
+  </pre>
+</div>
+
+<BR/>
+<A NAME="SECTION00030000000000000000"></A>
+<A NAME="sec:model_implementation"></A>
+<H1>
+Model Implementation
+</H1>
+
+<P>
+The implementations of each agent's functions are currently written in separate
+files written in C, suffixed with `.c'. Each file must include two
+header files, one for the overall framework and one for the particular agent that the functions are for.
+Functions for different agents cannot be contained in the same file.
+Thus, at the top of each file two headers are required:
+
+<BR/>
+<PRE>
+  #include "header.h"
+  #include "&lt;agentname&gt;_agent_header.h"
+</PRE>
+
+<P>
+Where `&lt;agent_name&gt;' is replaced with the actual agent name.
+Agent functions can then be written in the following style:
+
+<BR/>
+<PRE>
+  /*
+   * \fn: int function_name()
+   * \brief: A brief description of the function.
+   */
+  int function_name()
+  {
+     /* Function code here */
+    
+     return 0; /* Returning zero means the agent is not removed */
+  }
+</PRE>
+
+<P>
+The first commented part (four lines) is good practice and can be used to
+auto-generate source code documentation. The function name should coordinate
+with the agent function name and the function should return an integer. The
+functions have no parameters. Returning zero means the agent is not removed from
+the simulation, and returning the number one removes the agent immediately from
+the simulation. Agents of type `agentname' are added to a simulation by:
+
+<BR/>
+<PRE>
+  add_agentname_agent(var1, .. varN);
+</PRE>
+
+<P>
+New agents are only added at the start of the next iteration. This is because
+new agents start in their start state and are only picked up by the 
+simulation engine when all other agents are also in their start states.
+
+<P>
+
+<BR/>
+<A NAME="SECTION00031000000000000000"></A>
+<H2>
+Accessing Agent Memory Variables
+</H2>
+
+<P>
+After including the specific agent header, the variables in the
+agent memory can be accessed by capitalising the variable name:
+
+<BR/>
+<PRE>
+  AGENT_VARIABLE
+</PRE>
+
+<P>
+To access elements of a static array use square brackets and the index number:
+
+<BR/>
+<PRE>
+  MY_STATIC_ARRAY[index]
+</PRE>
+
+<P>
+To access the elements and the size of dynamic array variables use
+`.size' and `.array[index]':
+
+<BR/>
+<PRE>
+  MY_DYNAMIC_ARRAY.size
+  MY_DYNAMIC_ARRAY.array[index]
+</PRE>
+
+<P>
+To access variables of a model data type use `.variablename':
+
+<BR/>
+<PRE>
+  MY_DATA_TYPE.variablename
+</PRE>
+
+<BR/>
+<A NAME="SECTION00031100000000000000"></A>
+<H3>
+Using Model Data Types
+</H3>
+
+<P>
+The following is an example of how to use a data type called
+<I>vacancy</I>:
+
+<BR/>
+<PRE>
+  /* To allocate a local data type */
+  vacancy vac;
+  
+  /* And initialise */
+  init_vacancy(&amp;vac);
+  
+  /* Initialise a static array of the data type */
+  init_vacancy_static_array(&amp;vac_static_array, array_size);
+  
+  /* Free a data type */
+  free_vacancy(&amp;vac);
+  
+  /* Free a static array of a data type */
+  free_vacancy_static_array(&amp;vac_static_array, array_size);
+  
+  /* Copy a data type */
+  copy_vacancy(&amp;vac_from, &amp;vac_to);
+  
+  /* Copy a static array of a data type */
+  copy_vacancy_static_array(&amp;vac_static_array_from,
+                            &amp;vac_static_array_to, array_size);
+</PRE>
+
+<P>
+If the data type is a variable from the agent memory, then the data type
+variable name must be capitalised.
+
+<BR/>
+<A NAME="SECTION00031200000000000000"></A>
+<H3>
+Using Dynamic Arrays
+</H3>
+
+<P>
+Dynamic array variables are created by adding `_array' to the variable type.
+The following is an example of how to use a dynamic array:
+
+<BR/>
+<PRE>
+  /* Allocate local dynamic array */
+  vacancy_array vacancy_list;
+
+  /* And initialise */
+  init_vacancy_array(&amp;vacancy_list);
+  
+  /* Reset a dynamic array */
+  reset_vacancy_array(&amp;vacancy_list);
+  
+  /* Free a dynamic array */
+  free_vacancy_array(&amp;vacancy_list);
+  
+  /* Add an element to the dynamic array */
+  add_vacancy(&amp;vacancy_list, var1, .. varN);
+  
+  /* Remove an element at index index */
+  remove_vacancy(&amp;vacancy_list, index);
+  
+  /* Copy the array */
+  copy_vacancy_array(&amp;from_list, &amp;to_list);
+</PRE>
+
+<P>
+If the dynamic array is a variable from the agent memory, then the dynamic
+array variable name must be capitalised.
+
+<BR/>
+<A NAME="SECTION00032000000000000000"></A>
+<H2>
+Sending and receiving messages
+</H2>
+
+<P>
+Messages can be read using macros to loop through the incoming message list as
+per the template below, where `messagename' is replaced by the actual message
+name. Message variables can be accessed using an arrow `-&gt;':
+
+<BR/>
+<PRE>
+  START_MESSAGENAME_MESSAGE_LOOP
+    messagename_message-&gt;variablename
+  FINISH_MESSAGENAME_MESSAGE_LOOP
+</PRE>
+
+<P>
+Messages are sent or added to the message list by
+<BR/>
+<PRE>
+  add_messagename_message(var1, .. varN);
+</PRE>
+<BR/>
+<A NAME="SECTION00040000000000000000"></A>
+<A NAME="sec:model_execution"></A>
+<H1>
+Model Execution
+</H1>
+
+<P>
+FLAME contains a parser program called `xparser' that parses a model
+XMML definition into simulation program source code that can be compiled
+together with the agent functions implementation source code. The xparser
+includes template files which are used to generate the simulation program source code.
+
+<P>
+The xparser takes as parameters the location of the model file and an option
+for serial or parallel (MPI) version, serial being the default if the option is
+not specified. A production mode can also be switched on which removes any
+debugging features in the simulation program.
+
+<BR/>
+<PRE>
+  xparser (Version 0.16.2)
+  Usage: xparser [XMML file] [-s | -p] [-f]
+          -s      Serial mode
+          -p      Parallel mode
+          -f      Final production mode
+</PRE>
+
+<BR/>
+<A NAME="SECTION00041000000000000000"></A>
+<H2>
+Generated Files
+</H2>
+
+<P>
+The xparser then generates simulation source code files in the same directory
+as the model file. These files include documentation of the model:
+
+<BR/>
+
+<UL>
+<LI>stategraph.dot - a directed acyclic graph of the states, functions and
+  messages of agents in the model
+</LI>
+<LI>stategraph_colour.dot - as above but functions are coloured
+</LI>
+<LI>process_order_graph.dot - as above but the message syncronisation is
+  shown
+</LI>
+<LI>latex.dot - a latex document describing the model
+</LI>
+</UL>
+
+<P>
+The simulation program source code files:
+
+<BR/>
+
+<UL>
+<LI>Makefile - the compilation script used by the program `make'
+</LI>
+<LI>xml.c - the source code file that handles inputs and outputs of the
+  simulation
+</LI>
+<LI>main.c - the source code file containing the main program loop
+</LI>
+<LI>header.h - a C header file for global variables and function
+  declarations between source code files
+</LI>
+<LI>memory.c - the source code file that handles the memory requirements
+  of the simulation
+</LI>
+<LI>low_primes.h - holds data used for partitioning agents
+</LI>
+<LI>messageboards.c - the source code that handles message functionality
+</LI>
+<LI>partitioning.c - the source code that handles the partitioning of
+  agents between nodes in parallel
+</LI>
+<LI>timing.c - the source code that provides timing routines
+</LI>
+<LI>Doxyfile - a configuration file for generating documentation using
+ the program `doxygen'
+</LI>
+<LI>rules.c - the source code file containing the generated rules for
+  function conditions and message input filters
+</LI>
+</UL>
+
+<P>
+For each agent type an associated header file is created:
+
+<BR/>
+
+<UL>
+<LI>&lt;agent_name&gt;_agent_header.h - the header file containing macros for
+  accessing agent memory variables
+</LI>
+</UL>
+
+<P>
+The simulation source code files then require compilation, which can be easily
+achieved using the included compilation script `Makefile' using the `make'
+build automation tool. The program `make' invokes the `gcc' C compiler, which
+are both free and available on various operating systems. If the parallel
+version of the simulation was specified the compiler invoked by `make' is
+`mpicc' which is a script usually available on parallel systems. To manually
+change the C compiler used the parameter `CC' can be set:
+
+<BR/>
+<PRE>
+  make CC=gcc
+</PRE>
+
+<P>
+To compile a model the message board library is required and the installation
+directory is needed by the compilation script. Currently the directory for
+`libmboard' is set in the same location of the model file. This can also be
+manually changed by using the parameter `LIBMBOARD_DIR':
+
+<BR/>
+<PRE>
+  make LIBMBOARD_DIR=/location/of/libmboard
+</PRE>
+
+<P>
+The compiled program is called `main'. The parameters required to run a
+simulation include the number of iterations to run for and the initial start
+states (memory) of the agents, currently a formatted XML file.
+
+<BR/>
+<PRE>
+  FLAME Application: test_model_simple_everthing 
+  Debug mode enabled 
+  Usage: ./main &lt;number of iterations&gt; [&lt;states_directory&gt;]/&lt;init_state&gt;
+&lt;partitions&gt; [-f # | -f #+#]
+  -f    Output frequency, 1st # is frequency, 2nd # is the offset if required
+</PRE>
+
+<P>
+The frequency of producing output files can also be set by the parameter `-f'.
+
+<BR/>
+<A NAME="SECTION00042000000000000000"></A>
+<H2>
+Start States Files
+</H2>
+
+<P>
+The format of the initial start states XML is given by the following example:
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;states&gt;
+  &lt;itno&gt;0&lt;/itno&gt;
+  
+  &lt;environment&gt;
+  &lt;my_constant&gt;6&lt;/my_constant&gt;
+  &lt;/environment&gt;
+  
+  &lt;agents&gt;
+    &lt;xagent&gt;
+      &lt;name&gt;agent_name&lt;/name&gt;
+      &lt;var_name&gt;0&lt;/var_name&gt;
+      ...
+    &lt;/xagent&gt;
+    ...
+  &lt;/agents&gt;
+
+  &lt;/states&gt;</code>
+  </pre>
+</div>
+
+
+<P>
+The root tag is called `states' and the `itno' tag holds the iteration number
+that these states refer to. If there are any environment constants these are
+placed within the `environment' tags. Any agents that exist are defined within
+`xagent' tags and require the name of the agent within `name' tags. Any agent
+memory variable (or environment constant) value is defined within tags with
+the name of the variable. Arrays and data types are defined within curly
+brackets with commas between each element.
+
+<P>
+When a simulation is running after every iteration, a states file is produced
+in the same directory and in the same format as the start states file with the
+values of each agent's memory.
+
+<P>
+For advanced usage one can use the `import' and `output' tags.
+
+<P>
+Import tags are used to include other locations of start state data. You have 
+to provide the location (from where the current file is located), the format 
+(currently only `xml' is avaliable) and the type (either `environment' data 
+or `agent' data). Currently the import tags work to only one depth, they 
+cannot be nested. The following import tags read in agent and environment data
+from the file at `0_depth_1.xml' and agent data from
+`../test7/0_depth_1_agent.xml':
+
+<P>
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;imports&gt;
+    &lt;import&gt;
+      &lt;location&gt;0_depth_1.xml&lt;/location&gt;
+      &lt;format&gt;xml&lt;/format&gt;
+      &lt;type&gt;agent&lt;/type&gt;
+    &lt;/import&gt;
+    &lt;import&gt;
+      &lt;location&gt;../test7/0_depth_1_agent.xml&lt;/location&gt;
+      &lt;format&gt;xml&lt;/format&gt;
+      &lt;type&gt;agent&lt;/type&gt;
+    &lt;/import&gt;
+    &lt;import&gt;
+      &lt;location&gt;0_depth_1.xml&lt;/location&gt;
+      &lt;format&gt;xml&lt;/format&gt;
+      &lt;type&gt;environment&lt;/type&gt;
+    &lt;/import&gt;
+  &lt;/imports&gt;</code>
+  </pre>
+</div>
+
+
+<P>
+Output tags are used to better define what output one wants to save from a 
+simulation. Outputs can have two types, either `snapshot' (where the whole 
+simulation state, environment and agents, is output) or `agent' where the 
+agent name is specified and only that agent type is output. The format of the 
+output can be specified (although only xml is provided currently) and the 
+output location. Finally the timing can be specified. The `period' defines 
+the number of iterations between producing output, for example a period of 10 
+means data is output every 10 iterations, so if we start with iteration number 
+0 the data will be output in iterations 10, 20, 30.... A phase can also be
+applied to the output timing. A phase of 2 when used with a period of 10 means
+data is output 2 iterations after it usually would, for example it would now be
+2, 12, 22, 32.... The following example outputs a snapshot every 10
+iterations and the agent `agent_type_a' every 10 iterations starting at the
+second iteration:
+
+<P>
+
+<BR/>
+<div>
+  <pre>
+    <code class='xml'>&lt;outputs&gt;
+    &lt;output&gt;
+      &lt;type&gt;snapshot&lt;/type&gt;
+      &lt;format&gt;xml&lt;/format&gt;
+      &lt;location&gt;&lt;/location&gt;
+      &lt;time&gt;
+        &lt;period&gt;10&lt;/period&gt;
+        &lt;phase&gt;0&lt;/phase&gt;    
+        &lt;/time&gt;
+    &lt;/output&gt;
+    &lt;output&gt;
+      &lt;type&gt;agent&lt;/type&gt;
+      &lt;name&gt;agent_type_a&lt;/name&gt;
+      &lt;format&gt;xml&lt;/format&gt;
+      &lt;location&gt;&lt;/location&gt;
+      &lt;time&gt;
+        &lt;period&gt;10&lt;/period&gt;
+        &lt;phase&gt;2&lt;/phase&gt;    
+      &lt;/time&gt;
+    &lt;/output&gt;
+  &lt;/outputs&gt;</code>
+  </pre>
+</div>
+
+
+
+
+
+        </div>
+
+        <br />
+    </div>
+</div>

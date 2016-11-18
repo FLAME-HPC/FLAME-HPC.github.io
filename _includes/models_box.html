@@ -1,0 +1,38 @@
+<div>
+    <center>
+        <a href='/projects/'><img src="/projects/img/epidermis.png" name="models" id="models" width=300></a>
+        <div id="models_desc">Skin modelling</div>
+    </center>
+</div>
+    
+<script type="text/javascript"><!--
+    var ImageArr = new Array("/projects/img/euraceunibi.png",
+                           "/projects/img/sumo.jpg",
+                           "/projects/img/epitheliome.png",
+                           "/projects/img/nf-kb.png",
+                           "/projects/img/epidermis.png",
+                           "/projects/img/blood-brain.png",
+                           "/projects/img/killer_cells.png",
+                           "/projects/img/cancer.png");
+    var ImageDes = new Array("Economic Modelling",
+                           "Bacteria modelling",
+                           "Tissue modelling",
+                           "Protein cascade modelling",
+                           "Skin modelling",
+                           "Modelling the blood-brain barrier",
+                           "Natural killer cell and tumour cell modelling",
+                           "Neoangiogenesis in Cancer");
+  
+    function RotateImages(Start)
+    {
+        if(Start>=ImageArr.length)
+            Start=0;
+        document.getElementById('models').src = ImageArr[Start];
+        document.getElementById('models_desc').innerHTML = ImageDes[Start];
+        window.setTimeout("RotateImages("+(Start+1)+")",5000);
+    }
+    
+    var randomnumber = Math.floor(Math.random()*ImageArr.length);
+    RotateImages(randomnumber);
+//-->
+</script>

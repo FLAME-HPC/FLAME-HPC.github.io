@@ -1,0 +1,41 @@
+---
+layout: base
+title: FLAME website
+---
+
+<div class='span-15 append-1'>
+    <div class='intro-text'>
+        {% include intro_text.html %}
+    </div>
+</div>
+
+<div class='span-7 box last'>
+    <h1>Download Latest</h1>
+    {% include download_box.html %}
+</div>
+
+<div class='span-24'><hr /></div>
+
+<div class='span-7 colborder'>
+    <h1>Getting Started</h1>
+    <div class='large'>
+        {% include getting_started.html %}
+    </div>
+</div>
+
+<div class='span-7 colborder'>
+    <h1>Latest News</h1>
+    {% for post in site.categories.news limit:3 %}
+        <a href='{{ post.url }}'>{{ post.title }}</a> 
+        <span class='quiet'>(Posted on {{ post.date | date:"%d %B %Y"}})</span>
+        <div class='small'>
+        {{ post.content | truncatewords:30 }}
+        </div>
+    {% endfor %}
+</div>
+
+<div class='span-7 last'>
+    <h1>Projects that use FLAME</h1>
+    {% include featured_users.html %}
+    {% include models_box.html %}
+</div>

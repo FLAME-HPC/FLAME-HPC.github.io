@@ -1,0 +1,115 @@
+html, body { height: 100%; }
+#wrap { min-height: 100%; }
+#main { overflow:auto; padding-bottom: 80px; }
+#footer {
+    background-color: #eee;
+    border-top: 1px solid #ddd;
+    position: relative; clear:both;
+    margin-top: -80px; /* negative value of footer height */
+    height: 80px;
+} 
+/*Opera Fix*/
+body:before {
+    content:"";
+    height:100%;
+    float:left;
+    width:0;
+    margin-top:-32767px;
+}
+
+/* ----- restyle base elements ------ */
+h1 { font-size: 1.8em; }
+h2 { font-size: 1.4em; }
+
+#content a {
+    border-bottom: 1px dotted #369;
+    text-decoration: none;
+}
+#content a:hover {
+    border-bottom: 1px solid #369;
+}
+
+ul.menu, .menu li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    line-height: 1;
+}
+.menu li { float: left; }
+.menu li a {
+    display: block;
+    cursor: pointer;
+    text-decoration: none;
+}
+.menu li:hover { background-color: #fdd; }
+
+.nav-menu li.first a { border-left: 1px solid #ddd; }
+.nav-menu li a {
+    border-right: 1px solid #ddd;
+    font-weight: bold;
+    padding: 10px 10px;
+    color: #a00;
+}
+.footer-menu li a {
+    color: #a00;
+    padding: 5px;
+}
+.footer-menu li.first a { padding-left: 0; }
+
+.copyright a {
+    text-decoration: none;
+    color: #999;
+    font-weight: bold;
+}
+.copyright a:hover { text-decoration: underline; }
+
+.intro-text {
+    color:#333; 
+    font-family:Georgia, serif; 
+    font-size:1.6em;
+    font-style:italic; 
+    margin:.5em 0 1.5em 0;
+}
+
+.box h1 {
+    border-bottom:1px solid #ccc; 
+    color:#333; 
+    font-size:14px; 
+    font-weight:bold; 
+    text-transform:uppercase; 
+    line-height:17px; 
+}
+
+
+.date-label {
+    font-size: 1.2em;
+    line-height: 1.6em;
+    text-align: center;
+    background-color: #eee;
+    margin: 3px;
+    color: #555;
+}
+
+.date-label > div {
+    font-size: 2.2em;
+    color: #999;
+}
+
+.fake-image {
+    border: 1px dashed #bbb;
+    background-color: #eee;
+    padding: 20px;
+    min-height: 180px;
+    font-weight: bold;
+    color: #888;
+}
+
+/* override .highlight from blueprint as it messes with Pygments */
+div.highlight {
+    background-color: #eee;
+		margin: 5px 20px 5px 20px;
+		padding: 5px;
+}
+
+/* override paragraph indentation */
+p + p { text-indent: 0; margin-top: 1em;}

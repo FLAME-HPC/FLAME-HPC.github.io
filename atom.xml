@@ -1,0 +1,24 @@
+---
+layout: nil
+---
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+<title>FLAME</title>
+  <link href="http://www.flame.ac.uk/atom.xml" rel="self"/>
+  <link href="http://www.flame.ac.uk/"/>
+  <updated>{{ site.time | date_to_xmlschema }}</updated>
+  <id>http://www.flame.ac.uk/</id>
+  <author>
+    <name>FLAME Development Team</name>
+    <email>{{ site.contact_email }}</email>
+  </author>
+  {% for post in site.categories.news %}
+  <entry>
+    <title>{{ post.title }}</title>
+    <link href="http://www.flame.ac.uk/"/>
+    <updated>{{ post.date | date_to_xmlschema }}</updated>
+    <id>http://www.flame.ac.uk{{ post.id }}</id>
+    <content type="html">{{ post.content | xml_escape }}</content>
+  </entry>
+  {% endfor %}
+</feed>

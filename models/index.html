@@ -1,0 +1,139 @@
+---
+layout: base
+title: Projects
+
+project_list:
+  - row:
+    columns:
+    - pos1:     1
+      id:       1
+      model:  Cirlces
+      description: A very simple particle model in which the motion of the particles is governed by a simple elastic attraction and repulsion law.
+      XMML:  <a href="circles/circles.xml.txt">circles.xml</a>
+      functions:   <a href="circles/circles.c.txt"> circles.c</a>
+      data: <a href="cricles/initial.xml.txt"> initial.xml</a>
+      results: <a href="circles/resutls.xml.txt">results.xml</a>
+      complete: <a href="circles/circles.tar.gz">circles.tar.gz</a>
+      imgage:  circles/circles.png
+      img_desc: The distribution of cirlces agents after 100 iterations
+      url:      
+      
+    - pos2:     2
+      id:       2
+      model:  The Game of Life
+      description: The classic cellar automata problem by Conway.
+      XMML:
+      functions:     
+      data:
+      results: 
+
+      image: circles/circles.png
+      img_desc: 
+      url:      
+      
+    - pos3:     3
+      id:       3
+      model:  Preditor (Fox & Sheep)
+      description: Sheep being cased by foxes with birth and death.
+      XMML:
+      functions:
+      data:  
+      results:    
+      image:    
+      img_desc:
+      url:
+
+  - row:
+    columns:
+    - pos1:     4
+      id:       4
+      model:  Infection transition (SIR)
+      description: The group labels of S (susceptible), I (infectious) and R (recovered) lead this model to be called the SIR model. This is a good and simple model for many infectious diseases including measles, mumps and rubella.
+      XMML: 
+      functions:  
+      data:     
+      results:   
+      image:
+      img_desc:
+      url:
+
+    - pos2:     5
+      id:       5
+      model:  Simple Traffic
+      description: This is a simple one-dimensional traffic model which demonstrates the congestion wave often experienced on motorways.
+      XMML: 
+      functions:  
+      data:     
+      results:   
+      image:
+      img_desc:
+      url:
+---
+
+<h1>FLAME Model Library</h1>
+<div class='large alt'>
+The FLAME Model Library is a collection of relatively simple models that illustrate the use of FLAME in different applications. They can be used as tutorial examples or as the starting point in developing a new model. For each model there is: a short description of the application, the model XMML file, the source code of the transition functions, an set of initial data and some example outputs of a FLAME run.
+<br>
+If you have a simple model which you would like to contribute to the FLAME Model Library please <a href='/contact/'>contact us</a>.
+</div>
+
+{% for rows in page.project_list %}
+<div class='span-24'><hr /></div>
+{% for col in rows.columns %}
+{% if col.pos1 %}<div class='span-7 colborder'>{% endif %}
+{% if col.pos2 %}<div class='span-7 colborder'>{% endif %}
+{% if col.pos3 %}<div class='span-7 last'>{% endif %}
+<h2><b>{{ col.model }}</b></h2>
+    <!--ul>
+        <li-->
+        <p>
+        {{ col.description }}
+        <!--/li>
+        <li>
+            XMML: {{ col.XMML }}
+        </li>
+        <li>
+            Transition functions: {{ col.functions}}
+        </li>
+        <li>
+            Initail data: {{ col.data }}
+        </li>
+        <li>
+            Examples results: {{col.results}}
+        </li>
+        <li-->
+        <p>
+	    Complete model: {{col.complete}}
+        </p>
+        <!--/li>
+    </ul-->
+
+<center><img src='{{ col.image }}' alt='{{ col.domain }}' width='200' /></center>
+        <center>{{ col.img_desc }}</center>
+</div>
+{% endfor %}
+<div class='span-24'><br /></div>
+{% endfor %}
+
+<script type="text/javascript"><!--
+function showHide(elementid){
+    if (document.getElementById(elementid).style.display == 'none'){
+        document.getElementById(elementid).style.display = '';
+    } else {
+        document.getElementById(elementid).style.display = 'none';
+    }
+}
+{% for rows in page.project_list %}
+{% for col in rows.columns %}
+{% if col.author2 %}
+document.getElementById("dots_{{ col.id }}").style.display = '';
+document.getElementById("div_{{ col.id }}").style.display = 'none';
+{% endif %}
+{% if col.home2 %}
+document.getElementById("dots_i{{ col.id }}").style.display = '';
+document.getElementById("div_i{{ col.id }}").style.display = 'none';
+{% endif %}
+{% endfor %}
+{% endfor %}
+//-->
+</script>

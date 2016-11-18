@@ -1,0 +1,417 @@
+---
+layout: default
+title: Overview
+---
+<BR/>
+<A NAME="SECTION00010000000000000000"></A>  
+<H1>
+Introduction
+</H1> 
+ 
+<P> 
+The FLAME framework is an enabling tool to create agent-based models that can
+be run on high performance computers (HPCs). Models are created based upon a
+model of computation called (extended finite) state machines. By defining
+agent-based models in this way the FLAME framework can
+automatically generate simulation programs that can run models efficiently on
+HPCs.
+ 
+<P> 
+ 
+<H1><A NAME="SECTION00020000000000000000"></A> 
+<A NAME="sec:model_design"></A> 
+<BR> 
+Model Design
+</H1> 
+ 
+<P> 
+The philosophy of FLAME is to specify an agent-based model as you would specify
+software behaviour, as ultimately the execution of the model will be in software.
+The behaviour model is based upon state machines which are composed of a number
+of states with transition functions between those states. There is a single
+start state and by traversing states using the transition functions the machine
+executes the functions until it reaches an end state. This happens to each
+agent/machine as one time step or iteration is completed. Figure
+<A HREF="#fig:iteration_1">1</A> shows a model consisting of two agents each with two
+functions run one after the other. A time step or iteration of the model is when
+each agent goes from their start state to an end state.
+ 
+<P> 
+ 
+<DIV ALIGN="CENTER"><A NAME="fig:iteration_1"></A><A NAME="34"></A> 
+<TABLE> 
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 1:</STRONG> 
+An iteration with 2 agents with 2 functions each</CAPTION> 
+<TR><TD> 
+<DIV ALIGN="CENTER"> 
+<IMG
+ WIDTH="197" HEIGHT="295" ALIGN="BOTTOM" BORDER="0"
+ SRC="img/img1.png"
+ ALT="\includegraphics[scale=0.5, clip]{iteration_1.eps}"> 
+ 
+</DIV></TD></TR> 
+</TABLE> 
+</DIV> 
+ 
+<P> 
+Each agent has a memory that holds variables. Transition functions can read and
+write to variables in the agent's memory. Communication between agents is
+achieved via messages. Transition functions can also read incoming messages and write
+outgoing messages. 
+ 
+<P> 
+Because FLAME can execute agent models in parallel and on different processors
+the coordination of agent function execution depends on the communication
+between agents. Communication is synchronous to the agent model which means it
+happens at the same time. For agents this means that if an agent function
+receives a certain type of message, it cannot be executed until all the messages
+of that type have been sent and that they are all ready to be read. This means
+that no agent is given priority over reading any input and all agents have
+access to the same messages at the same time. This also means that the order
+that agents are executed does not matter.
+ 
+<P> 
+Because agents can be executed anywhere on a super computer cluster FLAME uses a
+broadcast communication method. This means that agents cannot directly send
+messages to another agent. Instead the receiving agent must filter messages that
+it only needs to read.
+ 
+<P> 
+Figure <A HREF="#fig:xmachine">2</A> shows an agent machine with a start state, 
+an end state and one transition function from one to the other which has access to the 
+agent memory and recieves input messages and produces output messages.
+ 
+<P> 
+ 
+<DIV ALIGN="CENTER"><A NAME="fig:xmachine"></A><A NAME="42"></A> 
+<TABLE> 
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 2:</STRONG> 
+An agent as a computational machine</CAPTION> 
+<TR><TD> 
+<DIV ALIGN="CENTER"> 
+<IMG
+ WIDTH="320" HEIGHT="277" ALIGN="BOTTOM" BORDER="0"
+ SRC="img/img2.png"
+ ALT="\includegraphics[scale=0.5, clip]{xmachine.eps}"> 
+ 
+</DIV></TD></TR> 
+</TABLE> 
+</DIV> 
+ 
+<P> 
+ 
+<P> 
+Describing an agent-based model would thus include the following individual
+stages for creating a model:
+ 
+<P> 
+ 
+<UL> 
+<LI>Identifying the agents and their functions
+</LI> 
+<LI>Identify the states which impose some order of function execution
+</LI> 
+<LI>Identify the memory as the set of variables that are accessed by
+functions 
+<BR>(including possible conditions on variables for the functions to
+occur)
+</LI> 
+<LI>Identify the input messages and output messages of each function 
+ 
+<BR>(including possible filters on inputs)
+ 
+<P> 
+</LI> 
+</UL> 
+ 
+<P> 
+Once a model has been defined using these criteria the implementation of the
+agent functions can be written as source code in the C programming language.
+FLAME can then use the model description to create a simulation program that
+handles agent execution and communication in parallel.
+ 
+<P> 
+<BR/>
+<A NAME="SECTION00021000000000000000"></A>  
+<H2>
+Swarm Example
+</H2> 
+ 
+<P> 
+For example a simple swarm (flocking) model would include an agent for a bird.
+Because agents can only communicate via messages in FLAME each bird needs to
+have a function that sends out a message with their current location. A second
+function is needed to read the messages and update the birds velocity depending
+on the other birds locations. A third function then updates the birds location
+using the birds new velocity. The three functions required of the bird agent are
+then:
+ 
+<P> 
+ 
+<UL> 
+<LI>signal - send out current position message
+</LI> 
+<LI>observe - read position messages from other agents and update velocity
+</LI> 
+<LI>respond - update position using the current velocity
+</LI> 
+</UL> 
+ 
+<P> 
+The functions occur in this order so states are included to impose this
+order, see Figure <A HREF="#fig:swarm_1">3</A>. As a requirement for automatic parallel
+execution agents can only enter particular states once during an iteration,
+i.e. there cannot be any loops back to a state already entered. This is so that
+parallel processes can easily stay synchronised, adding to the efficiently of a
+simulation. There can only be one start state per agent, but there can be many
+possible end states.
+ 
+<P> 
+ 
+<DIV ALIGN="CENTER"><A NAME="fig:swarm_1"></A><A NAME="55"></A> 
+<TABLE> 
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 3:</STRONG> 
+Swarm model including states</CAPTION> 
+<TR><TD> 
+<DIV ALIGN="CENTER"> 
+<IMG
+ WIDTH="488" HEIGHT="30" ALIGN="BOTTOM" BORDER="0"
+ SRC="img/img3.png"
+ ALT="\includegraphics[scale=0.5, clip]{swarm_1.eps}"> 
+ 
+</DIV></TD></TR> 
+</TABLE> 
+</DIV> 
+ 
+<P> 
+Functions can also have conditions. For instance, in
+the swarm model, a response function for flying and a response function when
+resting on the ground. The condition on the flying response function would be that the
+z-axis position of the agent be greater than zero while the resting response
+function condition would be when the z-axis position was zero, see Figure
+<A HREF="#fig:swarm_2">4</A>.
+ 
+<P> 
+ 
+<DIV ALIGN="CENTER"><A NAME="fig:swarm_2"></A><A NAME="63"></A> 
+<TABLE> 
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 4:</STRONG> 
+Swarm model including function conditions</CAPTION> 
+<TR><TD> 
+<DIV ALIGN="CENTER"> 
+<IMG
+ WIDTH="518" HEIGHT="73" ALIGN="BOTTOM" BORDER="0"
+ SRC="img/img4.png"
+ ALT="\includegraphics[scale=0.5, clip]{swarm_2.eps}"> 
+ 
+</DIV></TD></TR> 
+</TABLE> 
+</DIV> 
+ 
+<P> 
+The messages required for communication between agents are a signal message,
+which is output from `signal' and input to `observe', see Figure
+<A HREF="#fig:swarm_3">5</A>. This message would include the position of the agent that
+sent it, see Table <A HREF="#tab:signal_message">1</A>. A feature of swarm models and most
+agent-based models is that there is generally a limit on incoming communication. 
+In the swarm case this is the perceived distance of sight that an agent can view the location of other
+agents. This feature can be added to the model as a filter on inputs to a
+function, where the filter is a formula involving the position contained in the
+message (the position of the sending agent) and the receiving agent position.
+ 
+<P> 
+<BR><P></P> 
+<DIV ALIGN="CENTER"><A NAME="73"></A> 
+<TABLE> 
+<CAPTION><STRONG>Table 1:</STRONG> 
+Signal Message</CAPTION> 
+<TR><TD> 
+<DIV ALIGN="CENTER"><TABLE CELLPADDING=3 BORDER="1"> 
+<TR><TD ALIGN="LEFT">Type</TD> 
+<TD ALIGN="CENTER">Name</TD> 
+<TD ALIGN="LEFT">Description</TD> 
+</TR> 
+<TR><TD ALIGN="LEFT">double</TD> 
+<TD ALIGN="CENTER">px</TD> 
+<TD ALIGN="LEFT">x-axis position</TD> 
+</TR> 
+<TR><TD ALIGN="LEFT">double</TD> 
+<TD ALIGN="CENTER">py</TD> 
+<TD ALIGN="LEFT">y-axis position</TD> 
+</TR> 
+<TR><TD ALIGN="LEFT">double</TD> 
+<TD ALIGN="CENTER">pz</TD> 
+<TD ALIGN="LEFT">z-axis position</TD> 
+</TR> 
+</TABLE> 
+ 
+<A NAME="tab:signal_message"></A></DIV></TD></TR> 
+</TABLE> 
+</DIV><P></P> 
+<BR> 
+ 
+<P> 
+ 
+<DIV ALIGN="CENTER"><A NAME="fig:swarm_3"></A><A NAME="79"></A> 
+<TABLE> 
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 5:</STRONG> 
+Swarm model including messages</CAPTION> 
+<TR><TD> 
+<DIV ALIGN="CENTER"> 
+<IMG
+ WIDTH="518" HEIGHT="78" ALIGN="BOTTOM" BORDER="0"
+ SRC="img/img5.png"
+ ALT="\includegraphics[scale=0.5, clip]{swarm_3.eps}"> 
+ 
+</DIV></TD></TR> 
+</TABLE> 
+</DIV> 
+ 
+<P> 
+Functions that take a message type as input are only executed once all functions
+that output the same message type have finished. One iteration is taken as a
+standalone run of a simulation, so once all the functions that have a message
+type as an input have been executed, the messages are deleted as they are no
+longer required. Messages cannot be sent between iterations.
+ 
+<P> 
+Finally the memory required by the agent functions include the position of the
+agent, and its velocity, as shown in Table <A HREF="#tab:swarm_memory">2</A>.
+ 
+<P> 
+<BR><P></P> 
+<DIV ALIGN="CENTER"><A NAME="88"></A> 
+<TABLE> 
+<CAPTION><STRONG>Table 2:</STRONG> 
+Swarm Agent Memory</CAPTION> 
+<TR><TD> 
+<DIV ALIGN="CENTER"><TABLE CELLPADDING=3 BORDER="1"> 
+<TR><TD ALIGN="LEFT">Type</TD> 
+<TD ALIGN="CENTER">Name</TD> 
+<TD ALIGN="LEFT">Description</TD> 
+</TR> 
+<TR><TD ALIGN="LEFT">double</TD> 
+<TD ALIGN="CENTER">px</TD> 
+<TD ALIGN="LEFT">position in x-axis</TD> 
+</TR> 
+<TR><TD ALIGN="LEFT">double</TD> 
+<TD ALIGN="CENTER">py</TD> 
+<TD ALIGN="LEFT">position in y-axis</TD> 
+</TR> 
+<TR><TD ALIGN="LEFT">double</TD> 
+<TD ALIGN="CENTER">pz</TD> 
+<TD ALIGN="LEFT">position in z-axis</TD> 
+</TR> 
+<TR><TD ALIGN="LEFT">double</TD> 
+<TD ALIGN="CENTER">vx</TD> 
+<TD ALIGN="LEFT">velocity in x-axis</TD> 
+</TR> 
+<TR><TD ALIGN="LEFT">double</TD> 
+<TD ALIGN="CENTER">vy</TD> 
+<TD ALIGN="LEFT">velocity in y-axis</TD> 
+</TR> 
+<TR><TD ALIGN="LEFT">double</TD> 
+<TD ALIGN="CENTER">vz</TD> 
+<TD ALIGN="LEFT">velocity in z-axis</TD> 
+</TR> 
+</TABLE> 
+ 
+<A NAME="tab:swarm_memory"></A></DIV></TD></TR> 
+</TABLE> 
+</DIV><P></P> 
+<BR> 
+ 
+<P> 
+The swarm model can also be represented as a transition table, see Table
+<A HREF="#tab:swarmtransition">3</A>, where:
+ 
+<P> 
+ 
+<UL> 
+<LI>Current State - is the state the agent is currently in.
+</LI> 
+<LI>Input - is any inputs into the transition function.
+</LI> 
+<LI><IMG
+ WIDTH="43" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img/img6.png"
+ ALT="$M_{pre}$"> - are any preconditions of the memory on the transition.
+</LI> 
+<LI>Function - is the function name.
+</LI> 
+<LI><IMG
+ WIDTH="48" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img/img7.png"
+ ALT="$M_{post}$"> - is any change in the agent memory.
+</LI> 
+<LI>Output - is any outputs from the transition.
+</LI> 
+<LI>Next State - is the next state that is entered by the agent.
+</LI> 
+</UL> 
+ 
+<P> 
+<BR><P></P> 
+<DIV ALIGN="CENTER"><A NAME="102"></A> 
+<TABLE> 
+<CAPTION><STRONG>Table 3:</STRONG> 
+Swarm Agent Transition Table</CAPTION> 
+<TR><TD> 
+<DIV ALIGN="CENTER"><TABLE CELLPADDING=3 BORDER="1"> 
+<TR><TD ALIGN="CENTER">Current State</TD> 
+<TD ALIGN="CENTER">Input</TD> 
+<TD ALIGN="CENTER"><IMG
+ WIDTH="43" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img/img6.png"
+ ALT="$M_{pre}$"></TD> 
+<TD ALIGN="CENTER">Function</TD> 
+<TD ALIGN="CENTER"><IMG
+ WIDTH="48" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img/img7.png"
+ ALT="$M_{post}$"></TD> 
+<TD ALIGN="CENTER">Output</TD> 
+<TD ALIGN="CENTER">Next State</TD> 
+</TR> 
+<TR><TD ALIGN="CENTER">start</TD> 
+<TD ALIGN="CENTER">&nbsp;</TD> 
+<TD ALIGN="CENTER">&nbsp;</TD> 
+<TD ALIGN="CENTER">signal</TD> 
+<TD ALIGN="CENTER">&nbsp;</TD> 
+<TD ALIGN="CENTER">signal</TD> 
+<TD ALIGN="CENTER">1</TD> 
+</TR> 
+<TR><TD ALIGN="CENTER">1</TD> 
+<TD ALIGN="CENTER">signal</TD> 
+<TD ALIGN="CENTER">&nbsp;</TD> 
+<TD ALIGN="CENTER">observe</TD> 
+<TD ALIGN="CENTER">(velocity updated)</TD> 
+<TD ALIGN="CENTER">&nbsp;</TD> 
+<TD ALIGN="CENTER">2</TD> 
+</TR> 
+<TR><TD ALIGN="CENTER">2</TD> 
+<TD ALIGN="CENTER">&nbsp;</TD> 
+<TD ALIGN="CENTER"><IMG
+ WIDTH="50" HEIGHT="33" ALIGN="MIDDLE" BORDER="0"
+ SRC="img/img8.png"
+ ALT="$x &gt; 0$"></TD> 
+<TD ALIGN="CENTER">flying</TD> 
+<TD ALIGN="CENTER">(position updated)</TD> 
+<TD ALIGN="CENTER">&nbsp;</TD> 
+<TD ALIGN="CENTER">end</TD> 
+</TR> 
+<TR><TD ALIGN="CENTER">2</TD> 
+<TD ALIGN="CENTER">&nbsp;</TD> 
+<TD ALIGN="CENTER"><IMG
+ WIDTH="64" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ SRC="img/img9.png"
+ ALT="$x == 0$"></TD> 
+<TD ALIGN="CENTER">resting</TD> 
+<TD ALIGN="CENTER">(position updated)</TD> 
+<TD ALIGN="CENTER">&nbsp;</TD> 
+<TD ALIGN="CENTER">end</TD> 
+</TR> 
+</TABLE> 
+ 
+<A NAME="tab:swarmtransition"></A></DIV></TD></TR> 
+</TABLE> 
+</DIV><P></P>

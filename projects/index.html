@@ -1,0 +1,211 @@
+---
+layout: base
+title: Projects
+
+project_list:
+  - row:
+    columns:
+    - pos1:     1
+      id:       1
+      project:  EURACE
+      domain:   Economic modelling
+      author1:  Silvano Cincotti
+      author2:  Marco Raberto, Andrea Teglio, Herbert Dawid, Simon Gemkow, Philipp Harting, Sander van der Hoog, Michael Neugart, Christophe Deissenberg, Kordian Kabus, Mauro Gallegati, Matteo Richiardi, Saul Desiderio and Umberto Gostoli
+      home:     University of Genova, Italy
+      home2:    University of Bielefeld, Germany; University of the Mediterranean, France; Polytechnic University of Marche, Italy
+      pop_size: 3500-500000
+      image:    img/eurace.png
+      img_desc: Integrated markets
+      url:      http://www.eurace.org/
+      
+    - pos2:     2
+      id:       2
+      project:  SUMO2
+      domain:   Bacteria modelling
+      author1:  Hao Bai 
+      home:     University of Sheffield, UK
+      home2:    
+      pop_size: 60000
+      image:    img/sumo.jpg
+      img_desc: E. coli interacting with oxygen
+      url:      http://sysmo-sumo.mpi-magdeburg.mpg.de/trac/wiki/public
+      
+    - pos3:     3
+      id:       3
+      project:  FLAMEGPU
+      domain:   Agent modelling on GPUs
+      author1:  Paul Richmond
+      author2:  
+      home:     University of Sheffield, UK
+      home2:    
+      pop_size: 200000
+      image:    img/pedestrian_simulation.png
+      img_desc: Pedestrian Simulation
+      url:      http://www.flamegpu.com/
+
+  - row:
+    columns:
+    - pos1:     4
+      id:       4
+      project:  EURACE@UNIBI
+      domain:   Economic modelling
+      author1:  Herbert Dawid
+      author2:  Simon Gemkow, Philipp Harting, Sander van der Hoog, and Michael Neugart
+      home:     University of Bielefeld, Germany
+      home2:    
+      pop_size: 3500
+      image:    img/euraceunibi.png
+      img_desc: Macro economic variables
+      url:      http://www.wiwi.uni-bielefeld.de/vpl1/research/eurace-unibi.html
+    
+    - pos2:     5
+      id:       5
+      project:  NF-&#954;B
+      domain:   Protein cascade modelling
+      author1:  Aban Shuaib, Richard Williams
+      home:     University of Sheffield, UK
+      home2:    
+      pop_size: 2201
+      image:    img/nf-kb.png
+      img_desc: Proteins within a cell
+      url:      http://www.shef.ac.uk/cardiovascularscience
+      
+    - pos3:     6
+      id:       6
+      project:  Epidermis
+      domain:   Skin modelling
+      author1:  Xinshan 'Shannon' Li
+      author2:  Dr Anthony Bullock, Dr John Haycock, Prof Sheila MacNeil, Prof Rod Smallwood
+      home:     University of Sheffield, UK
+      home2:    
+      pop_size: 2000
+      image:    img/epidermis.png
+      img_desc: Layers of different cell types
+      url:      http://www.dcs.shef.ac.uk/~rod/Modelling_the_Epidermis.pdf
+      
+  - row:
+    columns:
+    - pos1:     7
+      id:       7
+      project:  Blood-Brain Barrier
+      domain:   Neuroscience/Biomedical Science
+      author1:  Gavin Fullstone
+      home:     University of Sheffield, UK
+      home2:    
+      pop_size: 1-2 million
+      image:    img/blood-brain.png
+      img_desc: Blood vein
+      url:      http://battaglia.group.shef.ac.uk/people/profile/?id=GF
+    
+    - pos2:     8
+      id:       8
+      project:  Natural Killer/Tumour Cells
+      domain:   Cellular modelling
+      author1:  Dave Rhodes
+      author2:  White Rose Group
+      home:     University of Sheffield, UK
+      home2:    
+      pop_size: 1000
+      image:    img/killer_cells.png
+      img_desc: Natural Killer cell and Tumour cell interactions
+      url:      
+      
+    - pos3:     9
+      id:       9
+      project:  Epitheliome
+      domain:   Tissue modelling
+      author1:  Phil McMinn, Tao Sun
+      author2:  Rod Smallwood, Jenny Southgate, Sheila Mac Neil, Mike Holcombe, Rod Hose, Richard Clayton, Rob Gaizauskas
+      home:     University of Sheffield, UK
+      home2:    
+      pop_size: 2077
+      image:    img/epitheliome.png
+      img_desc: Stratifying epithelial cells
+      url:      http://www.dcs.shef.ac.uk/~rod/Integrative_Biology.html
+
+  - row:
+    columns:
+    - pos1:     10
+      id:       10
+      project:  Neoangiogenesis in Cancer
+      domain:   Cancer modelling
+      author1:  Ana Barat
+      home:     Royal College of Surgeons of Ireland
+      home2:    
+      pop_size: 45000
+      image:    img/cancer.png
+      img_desc: Small tumour which is recruiting new vessels from existing blood vessels
+      url:      http://www.rcsi.ie/physiology
+
+---
+
+<h1>Projects</h1>
+<div class='large alt'>
+The following are some of the projects that we work with that use FLAME.
+Some more details about some can be found on the <a href='/meetings/2012/02/23/first-user-meeting.html'>first user meeting page</a>.
+<br/>
+If you are interested in being included on this page please <a href='/contact/'>contact us</a>.
+</div>
+
+{% for rows in page.project_list %}
+<div class='span-24'><hr /></div>
+{% for col in rows.columns %}
+{% if col.pos1 %}<div class='span-7 colborder'>{% endif %}
+{% if col.pos2 %}<div class='span-7 colborder'>{% endif %}
+{% if col.pos3 %}<div class='span-7 last'>{% endif %}
+<h2>{{ col.project }}</h2>
+    <ul>
+        <li>
+            Domain: {{ col.domain }}
+        </li>
+        <li>
+            Authors: {{ col.author1 }}{% if col.author2 %} <a id="dots_{{ col.id }}" style="display:none" href="javascript:showHide('div_{{ col.id }}');">...</a>
+            <div id="div_{{ col.id }}">
+            {{ col.author2 }}
+            </div>
+            {% endif %}
+        </li>
+        <li>
+            Institution: <span class='quiet'>{{ col.home }}{% if col.home2 %} <a id="dots_i{{ col.id }}" style="display:none" href="javascript:showHide('div_i{{ col.id }}');">...</a>
+            <div id="div_i{{ col.id }}">
+            {{ col.home2 }}
+            </div>
+            {% endif %}</span>
+        </li>
+        <li>
+            Population size: {{ col.pop_size }}
+        </li>
+        <li>
+            Web: {% if col.url %}<a href='{{ col.url }}'>link</a>{% endif %}
+        </li>
+    </ul>
+
+<center><img src='{{ col.image }}' alt='{{ col.domain }}' width='200' /></center>
+        <center>{{ col.img_desc }}</center>
+</div>
+{% endfor %}
+<div class='span-24'><br /></div>
+{% endfor %}
+
+<script type="text/javascript"><!--
+function showHide(elementid){
+    if (document.getElementById(elementid).style.display == 'none'){
+        document.getElementById(elementid).style.display = '';
+    } else {
+        document.getElementById(elementid).style.display = 'none';
+    }
+}
+{% for rows in page.project_list %}
+{% for col in rows.columns %}
+{% if col.author2 %}
+document.getElementById("dots_{{ col.id }}").style.display = '';
+document.getElementById("div_{{ col.id }}").style.display = 'none';
+{% endif %}
+{% if col.home2 %}
+document.getElementById("dots_i{{ col.id }}").style.display = '';
+document.getElementById("div_i{{ col.id }}").style.display = 'none';
+{% endif %}
+{% endfor %}
+{% endfor %}
+//-->
+</script>

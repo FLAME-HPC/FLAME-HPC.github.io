@@ -1,0 +1,72 @@
+---
+layout: base
+title: Tutorials
+
+tutorial_list:
+  - tutorial: 1
+    summary: An agent reads and writes to memory
+    files:
+     - title: model_01.xml
+     - title: agent_a_functions.c
+     - title: 0.xml  
+
+  - tutorial: 2
+    summary: An agent sends a message to another type of agent
+    files:
+    - title: model_02.xml
+    - title: agent_a_functions.c
+    - title: agent_b_functions.c
+    - title: 0.xml  
+
+  - tutorial: 3
+    summary:  A model with environment constants and user defined data types
+    files:
+    - title: model_03.xml
+    - title: agent_a_functions.c
+    - title: 0.xml
+
+  - tutorial: 4
+    summary:  A model with time units and agent function conditions
+    files:
+    - title: model_04.xml
+    - title: agent_a_functions.c
+    - title: 0.xml
+
+  - tutorial: 5
+    summary:  An agent that uses a message input filter, sort, and randomisation
+    files:
+    - title: model_05.xml
+    - title: agent_a_functions.c
+    - title: 0.xml
+
+  - tutorial: 6
+    summary:  A model that includes sub models
+    files:
+    - title: model_06.xml
+    - title: sub_model_depth_1a.xml
+    - title: sub_model_depth_1b.xml
+    - title: sub_model_depth_2.xml
+    - title: agent_a_functions_0.c
+    - title: agent_a_functions_1a.c
+    - title: agent_a_functions_1b.c
+    - title: agent_a_functions_2.c
+
+---
+
+<h1>Tutorials</h1>
+<div class='large alt'>
+The following are tutorials which guide you though all the features available for FLAME models.<br/>
+The models can be downloaded <a href='zip/tutorial_models.zip' title='tutorial_models.zip'>here</a>.
+</div>
+{% for tut in page.tutorial_list %}
+<div class='span-24'><hr /></div>
+<h2>Tutorial {{ tut.tutorial }}</h2>
+<div class='large alt'>{{ tut.summary }}</div>
+    <ul>
+    {% for tut_file in tut.files %}
+        <li>
+            <span class='quiet'>{{ tut_file.title }}</span>
+        </li>
+    {% endfor %}
+    </ul>
+{% endfor %}

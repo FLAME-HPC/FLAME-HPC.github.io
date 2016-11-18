@@ -1,0 +1,8 @@
+---
+layout: news
+title: FLAME Conference Talk at HPCC 2012
+---
+FLAME and future improvements for FLAME2 were presented at the 
+International Conference on High Performance Computing and 
+Communications in Liverpool. The associated 
+paper is available [here](/pubs/pdf/flame_hpcc12.pdf).

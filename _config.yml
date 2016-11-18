@@ -1,0 +1,14 @@
+contact_email: flame@dcs.shef.ac.uk
+
+safe:        false
+base-url:    /
+
+source:      .
+destination: ./_site
+plugins:     ./_plugins
+
+future:      true
+lsi:         false
+highlighter: false
+markdown:    kramdown 
+permalink:   date
