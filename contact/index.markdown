@@ -7,7 +7,7 @@ title: Contact Us
 
 ## Feedback, Questions, Testing...
 
-If you have general feedback, suggestions, or questions, please contact [flame-dev mailinglist](flame-dev@googlegroups.com). Join the mailinglist to recieve updates and get involved in the discusstion regarding FLAME.
+If you have general feedback, suggestions, or questions, please contact FLAME Developers group via flame-dev@googlegroups.com. Join the mailinglist to recieve updates and get involved in the discusstion regarding FLAME.
 
 <!--
 Do get in touch with:
@@ -19,7 +19,7 @@ Do get in touch with:
 
 ## Reporting Bugs
 
-#Bug reports can be filed on our [CCPForge project page](http://ccpforge.cse.rl.ac.uk/gf/project/xagents/tracker/?action=TrackerItemBrowse&tracker_id=249).
+<!--Bug reports can be filed on our [CCPForge project page](http://ccpforge.cse.rl.ac.uk/gf/project/xagents/tracker/?action=TrackerItemBrowse&tracker_id=249). -->
 
 Please use GitHub issue tracker (https://github.com/FLAME-HPC/FLAMEII/issues) to report bugs, issues or request a sepcefic feature.
 
