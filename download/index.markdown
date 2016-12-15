@@ -5,14 +5,20 @@ title: Download FLAME
 
 * * *
 
-Programs to run FLAME models (**xparser** and **libmboard**) are currently available in FLAME repository on GitHub [(FLAME-HPC)](https://github.com/FLAME-HPC/).
+# Source Code now on GitGub
+
+Source code for FLAME (**xparser** and **libmboard**) is now available on the FLAME-HPC GitHub [(FLAME-HPC)](https://github.com/FLAME-HPC/) Github account. Contributions can be made by issuing pull requests.
+
+The FLAME GUI and Visualiser tools are also being migrated to GitHub from CCPForge.
 
 **Installation instructions** can be found under documentation [here](../docs/install.html).
 
 How to **run a model** can be found under documentation [here](../docs/user_manual.html#sec:model_execution).
 
-<!--
-Programs to edit FLAME models and visualise data (FLAME **editor** and **visualiser**) are currently available from the CCPForge website [here](http://ccpforge.cse.rl.ac.uk/gf/project/flame/frs/).
--->
+# Releases
 
-Programs to edit FLAME models and visualise data (FLAME **editor** and **visualiser**) are currently available in in FLAME repository on GitHub [(FLAME-HPC)](https://github.com/FLAME-HPC).
+Code releases are available on GitHub [xparser](https://github.com/FLAME-HPC/xparser/releases)
+
+Old code releases are archieved on the CCPForge Website [here](http://ccpforge.cse.rl.ac.uk/gf/project/flame/frs/).
+
+
