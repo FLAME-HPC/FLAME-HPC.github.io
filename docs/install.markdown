@@ -16,8 +16,8 @@ This can be easily installed under the following operations systems:
 
 ### **Mac OSX**
 > 1. Install Xcode
->> 1. From the Mac App Store
->> 2. Newer versions might require you to download the Command Line Tools from the preferences panel.
+> 1. From the Mac App Store
+> 2. Newer versions might require you to download the Command Line Tools from the preferences panel.
 
 ### **Linux**
 > 1. Should already be installed or use your distributions Package Manager to install GCC
