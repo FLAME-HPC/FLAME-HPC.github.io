@@ -13,10 +13,12 @@ This can be easily installed under the following operations systems:
 > 1. Install MinGW following the Getting Started guide at [Getting Started](http://www.mingw.org/wiki/Getting_Started "Getting Started")
 > 2. Remember to change the Environment Settings to add MinGW to the *path*
 > 3. Change the name of **C:\MinGW\bin\mingw32-make.exe** to just **make.exe**
+
 ### **Mac OSX**
 > 1. Install Xcode
 >> 1. From the Mac App Store
 >> 2. Newer versions might require you to download the Command Line Tools from the preferences panel.
+
 ### **Linux**
 > 1. Should already be installed or use your distributions Package Manager to install GCC
 
