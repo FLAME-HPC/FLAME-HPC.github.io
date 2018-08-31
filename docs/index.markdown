@@ -22,3 +22,7 @@ A manual describing in detail each feature of FLAME.
 ***
 ## [XMML Schema](../schema/xmml_v2.xsd "xmml schema")
 An schema which describes the structure of FLAME model files.
+
+***
+## [FAQ for FLAME](pdf/FLAME_FAQ.pdf "FLAME_FAQ")
+FAQ for FLAME written in December 2009
